@@ -1,56 +1,64 @@
-var interval = 60;
+// Configuration is read from the settings panel in index.html (#config-panel)
 
-var answers = false;
+var currentTimes = [];
 
-var preventRepeats = true;
-var timesUsed = [];
-
-var i;
-for (i = 0; i < 9; i++) {
-    selector = ".clock" + (i + 1);
-    let time = nextTime(interval);
-    $(selector).setAsClock({
-        setTime: time,
-        // backgroundColor: nextBackgroundColor(),
-        backgroundColor: 'white',
-        numbers: true,
-        ticks: 1,
-        numberSize: '24px',
-        // color: nextFontColor(),
-        color: 'black',
-        // borderRadius: nextBorderRadius()
-        // borderRadius: nextBorderRadius()
-    });
-    text = answers ? timeString(time) : ":"
-    $(selector).parents(1).children('input').val(text);
+function getConfig() {
+    return {
+        interval: parseInt($('#config-interval').val(), 10),
+        answers: $('#config-answers').is(':checked'),
+        colors: $('#config-colors').is(':checked'),
+        seed: $('#config-seed').val()
+    };
 }
 
-
-function randomHour() {
-    return Math.floor(Math.random() * 12) + 1;
+// Generate 9 new times and redraw everything
+function newWorksheet() {
+    var config = getConfig();
+    if (config.seed !== '')
+        resetRandom(parseInt(config.seed, 10));
+    currentTimes = [];
+    for (var i = 0; i < 9; i++)
+        currentTimes.push(nextTime(config.interval));
+    renderClocks();
 }
 
-function randomMinute(interval) {
-    if (interval === undefined)
-        interval = 15;
-    return (Math.round(60 * Math.random()) * interval) % 60;
+// Redraw the clocks for the current times (colors may change)
+function renderClocks() {
+    var config = getConfig();
+    generateColorPairs();
+    for (var i = 0; i < 9; i++) {
+        var clock = $(".clock" + (i + 1));
+        clock.empty();
+        clock.setAsClock({
+            setTime: currentTimes[i],
+            backgroundColor: config.colors ? nextBackgroundColor() : 'white',
+            numbers: true,
+            ticks: 1,
+            numberSize: '24px',
+            color: config.colors ? nextFontColor() : 'black'
+        });
+    }
+    updateInputs();
+}
+
+// Fill the inputs under the clocks with answers or a blank ":"
+function updateInputs() {
+    var config = getConfig();
+    for (var i = 0; i < 9; i++) {
+        var selector = ".clock" + (i + 1);
+        var text = config.answers ? timeString(currentTimes[i]) : ":";
+        $(selector).parents(1).children('input').val(text);
+    }
 }
 
 function timeString(date) {
     return date.getHours().toString() + ":" + date.getMinutes().toString().padStart(2, '0');
 }
 
-function buildTime(hour, minute) {
-    d = new Date();
-    d.setHours(hour);
-    d.setMinutes(minute);
-    d.setSeconds(0);
-    return d;
-}
+$('#config-interval').on('change', newWorksheet);
+$('#config-seed').on('change', newWorksheet);
+$('#new-worksheet').on('click', newWorksheet);
+$('#config-colors').on('change', renderClocks);
+$('#config-answers').on('change', updateInputs);
 
-function randomColor() {
-    var index = Math.floor(Math.random() * colors.length);
-    color = colors.splice(index, 1);
-    return color[0];
-}
-
+newWorksheet();

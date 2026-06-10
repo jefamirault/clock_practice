@@ -288,7 +288,7 @@ code {
     transform: rotate(90deg) scale(0); }
   100% {
     transform: rotate(90deg) scale(1); } }
-input {
+input.time-input {
   margin: 20px 0;
   padding: 0 20px;
   width: 100%;
@@ -297,6 +297,18 @@ input {
   font-weight: bold;
   border: 2px solid #999;
   text-align: center; }
+
+#config-panel .form-group,
+#config-panel .checkbox,
+#config-panel .btn {
+  margin-right: 15px; }
+
+#config-seed {
+  width: 110px; }
+
+@media print {
+  .no-print {
+    display: none; } }
 
 .hour-hand .arm:before {
   border: solid black;

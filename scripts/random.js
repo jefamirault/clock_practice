@@ -18,6 +18,13 @@ function rng(startSeed) {
 
 var timeRng = rng(seed);
 
+// Restart all generators from a new seed (used by the seed field in the settings panel)
+function resetRandom(newSeed) {
+    seed = newSeed;
+    timeRng = rng(seed);
+    colorRng = rng(seed);
+}
+
 function randomHour() {
     return Math.floor(timeRng() * 12) + 1;
 }
@@ -96,11 +103,6 @@ var lightColors = [
     '#cfd8dc'
 ];
 
-var times = [];
-
-for (var i = 0; i < 9; i++)
-    times.push(randomTime());
-
 // return a random element in the array (with replacement)
 function sample(array) {
     let size = array.length;
@@ -134,20 +136,23 @@ var colorRng = rng(seed);
 var fontColors = [];
 var bgColors = [];
 
-var whiteOrBlack = sampler(['white', 'black'], true, colorRng);
-
-var sampleDarkColor = sampler(darkColors, false);
-var sampleLightColor = sampler(lightColors, false);
-
-for (let i = 0; i < 9; i++) {
-    let fontColor = whiteOrBlack();
-    let bgColor;
-    if (fontColor === 'white')
-        bgColor = sampleDarkColor();
-    else
-        bgColor = sampleLightColor();
-    fontColors.push(fontColor);
-    bgColors.push(bgColor);
+// Pick 9 font/background pairs: white text on a dark color or black text on a light one
+function generateColorPairs() {
+    fontColors = [];
+    bgColors = [];
+    var whiteOrBlack = sampler(['white', 'black'], true, colorRng);
+    var sampleDarkColor = sampler(darkColors, false, colorRng);
+    var sampleLightColor = sampler(lightColors, false, colorRng);
+    for (let i = 0; i < 9; i++) {
+        let fontColor = whiteOrBlack();
+        let bgColor;
+        if (fontColor === 'white')
+            bgColor = sampleDarkColor();
+        else
+            bgColor = sampleLightColor();
+        fontColors.push(fontColor);
+        bgColors.push(bgColor);
+    }
 }
 
 var nextBackgroundColor = function() {

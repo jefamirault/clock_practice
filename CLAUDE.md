@@ -12,31 +12,29 @@ Then open `http://localhost:8000` and print the page. Reload to generate a new w
 
 ## Configuration
 
-There is no UI for settings. All configuration is done by editing variables at the top of two files:
+Settings live in the panel at the top of the page (`#config-panel` in `index.html`, hidden when printing via the `.no-print` class):
 
-### `scripts/script.js`
+- **Times to nearest** (`#config-interval`) — minute granularity of the random times: hour, half hour, quarter hour, 5 minutes, or minute. Changing it generates a new worksheet.
+- **Show answers** (`#config-answers`) — pre-fills the input under each clock with the answer (e.g. `3:45`) for printing an answer key; unchecked shows just `:`. Toggling only updates the inputs, the clocks keep their times.
+- **Colored clocks** (`#config-colors`) — colored clock faces instead of white/black. Re-renders the current times with new colors.
+- **Seed** (`#config-seed`) — optional. Entering a number makes worksheets reproducible (same seed = same times/colors); blank keeps the random seed.
+- **New Worksheet** — regenerates 9 new times with the current settings.
 
-- `var interval = 60;` — minute granularity of the random times. `60` = on the hour, `30` = half hours, `15` = quarter hours, `5` = five-minute marks, `1` = any minute.
-- `var answers = false;` — when `true`, the input under each clock is pre-filled with the answer (e.g. `3:45`) to print an answer key. When `false`, inputs show just `:` for students to fill in.
+`script.js` reads the panel via `getConfig()`; there are no config variables to edit. The color palettes are still code-level config in `scripts/random.js`:
 
-### `scripts/random.js`
-
-- `var seed = Math.floor( Math.random() * 1000000 );` — seed for the pseudorandom generator. Uncomment the fixed-seed line below it (`var seed = 111111;`) to get a reproducible worksheet (same times/colors every reload).
 - `var darkColors` / `var lightColors` — hex color palettes for clock backgrounds. Dark backgrounds get white numbers, light backgrounds get black numbers. Individual colors are toggled by commenting/uncommenting entries; colors are sampled without replacement so all 9 clocks differ.
-
-Note: colored clocks are currently disabled — in `script.js` the `setAsClock` call hardcodes `backgroundColor: 'white'` and `color: 'black'`. To re-enable colors, swap those lines for the commented-out `nextBackgroundColor()` / `nextFontColor()` calls.
 
 ## Structure
 
-- `index.html` — page layout: 3×3 grid of clock divs (`.clock1`–`.clock9`), each with an `<input>` below it for writing the time.
-- `scripts/script.js` — entry point (loaded last). Holds the config vars above and the loop that initializes each clock via the `setAsClock` jQuery plugin.
-- `scripts/random.js` — seeded PRNG (`rng`, `sampler`), random time generation (`randomTime`, `nextTime`), and color-pairing logic that pre-computes 9 font/background pairs.
+- `index.html` — settings panel plus a 3×3 grid of clock divs (`.clock1`–`.clock9`), each with an `<input class="time-input">` below it for writing the time.
+- `scripts/script.js` — entry point (loaded last). Reads the settings panel (`getConfig()`) and drives generation: `newWorksheet()` (new times), `renderClocks()` (redraw via the `setAsClock` jQuery plugin), `updateInputs()` (answers/blanks).
+- `scripts/random.js` — seeded PRNG (`rng`, `sampler`, `resetRandom`), random time generation (`randomTime`, `nextTime`), and `generateColorPairs()` which picks 9 font/background pairs per render.
 - `scripts/anoClock.js` — third-party jQuery plugin (by Andrew Sheffield) that draws an analog clock; not project code, avoid editing.
 - `scripts/jquery-2.2.4.min.js`, `scripts/bootstrap.min.js`, `styles/*.min.css` — vendored libraries, do not edit.
-- `styles/style.css` — project styles, including print layout for the worksheet.
+- `styles/style.css` — project styles. The oversized answer-box style is scoped to `input.time-input` (don't make it a bare `input` rule or it breaks the settings panel). `@media print { .no-print { display: none; } }` hides the panel when printing.
 
 ## Gotchas
 
-- `random.js` must load before `script.js` (it defines `nextTime` and the color samplers). `index.html` loads `script.js` with the path `../scripts/script.js`; browsers normalize this to `/scripts/script.js` from the server root, so it works, but keep it in mind if moving files.
-- Both files define `randomHour`/`randomMinute`; the `script.js` versions (unseeded) win because it loads last, but `nextTime` was already bound to the seeded versions in `random.js`, so the seed still controls the clock times.
-- Times can repeat across the 9 clocks despite `preventRepeats = true` in `script.js` — that flag is declared but not implemented.
+- `random.js` must load before `script.js` (it defines `nextTime`, `resetRandom`, and `generateColorPairs`).
+- The `setAsClock` plugin appends DOM into the clock div on every call — always `empty()` the div before re-rendering (renderClocks does this).
+- Times can repeat across the 9 clocks; there is no repeat prevention.
