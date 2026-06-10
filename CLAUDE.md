@@ -10,6 +10,14 @@ Static web page that renders 9 random analog clocks for printable time-telling p
 
 Then open `http://localhost:8000` and print the page. Reload to generate a new worksheet.
 
+## Deploying
+
+```sh
+./deploy.sh   # rsyncs the site to the nginx server
+```
+
+Rsyncs `index.html`, `scripts/`, and `styles/` (nothing else — no `.git`, `CLAUDE.md`, or the script itself) to the server's nginx web root, with `--delete`. Server settings come from a gitignored `.env` (`DEPLOY_USER`, `DEPLOY_HOST`, `DEPLOY_PATH`); copy `.env.example` to `.env` and fill in the host to set up a new machine. The script aborts with a message if `.env` or any variable is missing. Rsync runs with `--no-owner --no-group` because the deploy user can't chown/chgrp files created by other users on the server.
+
 ## Configuration
 
 Settings live in the panel at the top of the page (`#config-panel` in `index.html`, hidden when printing via the `.no-print` class):
@@ -31,6 +39,7 @@ Settings live in the panel at the top of the page (`#config-panel` in `index.htm
 - `scripts/random.js` — seeded PRNG (`rng`, `sampler`, `resetRandom`), random time generation (`randomTime`, `nextTime`), and `generateColorPairs()` which picks 9 font/background pairs per render.
 - `scripts/anoClock.js` — third-party jQuery plugin (by Andrew Sheffield) that draws an analog clock; not project code, avoid editing.
 - `scripts/jquery-2.2.4.min.js`, `scripts/bootstrap.min.js`, `styles/*.min.css` — vendored libraries, do not edit.
+- `deploy.sh` / `.env.example` — deployment (see Deploying above). `.env` holds the real server settings and is gitignored.
 - `styles/style.css` — project styles. The oversized answer-box style is scoped to `input.time-input` (don't make it a bare `input` rule or it breaks the settings panel). `@media print { .no-print { display: none; } }` hides the panel when printing.
 
 ## Gotchas
