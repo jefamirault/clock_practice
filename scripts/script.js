@@ -20,6 +20,26 @@ function newWorksheet() {
     for (var i = 0; i < 9; i++)
         currentTimes.push(nextTime(config.interval));
     renderClocks();
+    updateSheetText();
+}
+
+var intervalPhrases = {
+    60: 'hour',
+    30: 'half hour',
+    15: 'quarter hour',
+    5: 'five minutes',
+    1: 'minute'
+};
+
+// Instructions, answer-key stamp, and seed note on the printable sheet
+function updateSheetText() {
+    var config = getConfig();
+    var phrase = intervalPhrases[config.interval];
+    var instructions = 'Write the time shown on each clock' +
+        (config.interval === 1 ? '.' : ', to the nearest ' + phrase + '.');
+    $('#sheet-instructions').text(instructions);
+    $('#answer-badge').prop('hidden', !config.answers);
+    $('#sheet-meta').text(config.seed !== '' ? 'Seed ' + config.seed : '');
 }
 
 // Redraw the clocks for the current times (colors may change)
@@ -47,7 +67,7 @@ function updateInputs() {
     for (var i = 0; i < 9; i++) {
         var selector = ".clock" + (i + 1);
         var text = config.answers ? timeString(currentTimes[i]) : ":";
-        $(selector).parents(1).children('input').val(text);
+        $(selector).closest('.clock-cell').find('input.time-input').val(text);
     }
 }
 
@@ -59,6 +79,12 @@ $('#config-interval').on('change', newWorksheet);
 $('#config-seed').on('change', newWorksheet);
 $('#new-worksheet').on('click', newWorksheet);
 $('#config-colors').on('change', renderClocks);
-$('#config-answers').on('change', updateInputs);
+$('#config-answers').on('change', function() {
+    updateInputs();
+    updateSheetText();
+});
+$('#print-worksheet').on('click', function() {
+    window.print();
+});
 
 newWorksheet();

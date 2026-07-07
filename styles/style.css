@@ -1,314 +1,428 @@
-html {
-  text-align: center; }
+/* ---------------------------------------------------------------------------
+   Clock Worksheet Generator
+   Screen: a white worksheet "paper" on a chalkboard-green desk.
+   Print: the paper alone, tuned to fit one page.
+   --------------------------------------------------------------------------- */
 
-.container {
-  width: 900px; }
+:root {
+  --board: #2f4f45;        /* chalkboard green */
+  --board-deep: #26413a;
+  --chalk: #f3efe4;
+  --chalk-dim: rgba(243, 239, 228, 0.68);
+  --paper: #ffffff;
+  --ink: #21272e;
+  --ink-soft: #5a6470;
+  --pencil: #f5b31b;       /* pencil yellow */
+  --pencil-deep: #dd9c05;
+  --margin-red: #d4604d;   /* worksheet margin line */
+  --rule-blue: #b9cfe3;    /* notebook rule */
+  --display: 'Fredoka', 'Trebuchet MS', sans-serif;
+  --body: 'Atkinson Hyperlegible', 'Segoe UI', sans-serif;
+}
 
-.row {
-  margin-top: 20px; }
+* {
+  box-sizing: border-box;
+}
 
-.clock-container {
+body {
+  margin: 0;
+  font-family: var(--body);
+  font-size: 16px;
+  color: var(--chalk);
+  background-color: var(--board);
+  background-image: radial-gradient(ellipse 120% 90% at 50% 0%,
+      rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.18));
+  min-height: 100vh;
+}
+
+a {
+  color: var(--pencil);
+}
+
+:focus-visible {
+  outline: 3px solid var(--pencil);
+  outline-offset: 2px;
+}
+
+/* ---- Site header ---------------------------------------------------------- */
+
+.site-header {
+  max-width: 900px;
   margin: 0 auto;
-  display: block;
-  height: 200px;
-  width: 200px; }
+  padding: 28px 20px 4px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
 
-code {
-  display: inline-block;
-  text-align: left; }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
 
-.time-zone {
-  margin-top: 30px; }
+.site-header h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.7rem;
+  letter-spacing: 0.01em;
+}
 
-.mohan-clock {
+.byline {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--chalk-dim);
+}
+
+.byline a {
+  color: var(--chalk);
+}
+
+/* Chalk-outline mini clock, drawn at three o'clock */
+.logo-clock {
   position: relative;
-  background: #4c2e58;
-  height: 500px; }
-  .mohan-clock h4 {
-    color: white; }
-  .mohan-clock *, .mohan-clock :after, .mohan-clock :before {
-    box-sizing: border-box; }
-  .mohan-clock .pull-left {
-    float: left; }
-  .mohan-clock .pull-right {
-    float: right; }
-  .mohan-clock .clearfix:after, .mohan-clock .clearfix:before {
-    content: '';
-    display: table; }
-  .mohan-clock .clearfix:after {
-    clear: both;
-    display: block; }
-  .mohan-clock .time-wrap,
-  .mohan-clock .time-wrap .time-base,
-  .mohan-clock .time-wrap .time-wheel,
-  .mohan-clock .time-wrap .time-clock,
-  .mohan-clock .time-wrap .time-wheel:before,
-  .mohan-clock .time-wrap .time-wheel:after,
-  .mohan-clock .time-wrap .time-clock .indicators,
-  .mohan-clock .time-wrap .time-clock .indicators > div,
-  .mohan-clock .time-wrap .time-clock .letters,
-  .mohan-clock .time-wrap .time-clock .letters > div,
-  .mohan-clock .time-wrap .time-clock .arrows,
-  .mohan-clock .time-wrap .time-clock .arrows > div {
-    top: 50%;
-    left: 50%;
-    position: absolute; }
-  .mohan-clock .time-wrap .time-belt:before,
-  .mohan-clock .time-wrap .time-belt:after,
-  .mohan-clock .time-wrap .time-wheel:before,
-  .mohan-clock .time-wrap .time-wheel:after,
-  .mohan-clock .time-wrap .time-clock .indicators:before,
-  .mohan-clock .time-wrap .time-clock .letters > div:before,
-  .mohan-clock .time-wrap .time-clock .letters > div:after,
-  .mohan-clock .time-wrap .time-clock .arrows > div:before,
-  .mohan-clock .time-wrap .time-clock .arrows .second:after {
-    content: '';
-    position: absolute; }
-  .mohan-clock .time-wrap {
-    width: 380px;
-    height: 380px;
-    overflow: hidden;
-    border-radius: 50%;
-    margin-top: 50px;
-    margin-left: -190px;
-    background: rgba(0, 0, 0, 0.2);
-    animation-duration: .4s; }
-  .mohan-clock .time-wrap .time-base {
-    width: 180px;
-    height: 260px;
-    margin-top: -130px;
-    background: #dde5eb;
-    margin-left: -90px;
-    border-radius: 100px / 30px;
-    animation-delay: .4s;
-    animation-duration: .4s; }
-  .mohan-clock .time-wrap .time-belt {
-    z-index: 1;
-    margin: auto;
-    width: 150px;
-    height: inherit;
-    overflow: hidden;
-    position: relative;
-    background: #f7af76;
-    border-radius: 120px / 30px;
-    animation-delay: .6s;
-    animation-duration: .6s; }
-  .mohan-clock .time-wrap .time-belt:before,
-  .mohan-clock .time-wrap .time-belt:after {
-    width: 40px;
-    height: inherit;
-    background: #743a6a; }
-  .mohan-clock .time-wrap .time-belt:before {
-    left: 0; }
-  .mohan-clock .time-wrap .time-belt:after {
-    right: 0; }
-  .mohan-clock .time-wrap .time-wheel {
-    left: auto;
-    right: 45px;
-    width: 30px;
-    height: 30px;
-    margin-top: -15px;
-    background: #c7d9e3;
-    border-radius: 0 10px 10px 0;
-    animation-delay: 1.6s;
-    animation-duration: .8s; }
-  .mohan-clock .time-wrap .time-wheel:before {
-    z-index: 1;
-    left: 15px;
-    width: 6px;
-    height: 36px;
-    margin-top: -18px;
-    background: linear-gradient(to bottom, #ccdbe5, #ccdbe5 50%, #dde5eb 50%, #dde5eb);
-    background-position: 0;
-    background-size: 100% 4px; }
-  .mohan-clock .time-wrap .time-wheel:after {
-    right: 4px;
-    left: auto;
-    width: 14px;
-    height: 40px;
-    margin-top: -20px;
-    background: #dde5eb;
-    border-radius: 0 8px 8px 0; }
-  .mohan-clock .time-wrap .time-clock {
-    z-index: 5;
-    width: 240px;
-    height: 240px;
-    background: #fff;
-    border-radius: 50%;
-    margin-top: -120px;
-    margin-left: -120px;
-    border: 10px solid #dde5eb;
-    box-shadow: 0 0 0 5px #c7d9e3 inset, -6px 6px 0 0 rgba(0, 0, 0, 0.1);
-    animation-delay: 1s;
-    animation-duration: .4s; }
-  .mohan-clock .time-wrap .time-clock .indicators {
-    width: 210px;
-    height: 210px;
-    margin-top: -105px;
-    margin-left: -105px; }
-  .mohan-clock .time-wrap .time-clock .indicators:before {
-    top: 50%;
-    left: 50%;
-    z-index: 1;
-    width: 190px;
-    height: 190px;
-    background: #fff;
-    border-radius: 50%;
-    margin-top: -95px;
-    margin-left: -95px; }
-  .mohan-clock .time-wrap .time-clock .indicators > div,
-  .mohan-clock .time-wrap .time-clock .letters > div {
-    height: 1px;
-    width: 210px;
-    margin-top: -0.5px;
-    position: absolute;
-    margin-left: -105px;
-    border: 1px solid #743a6a; }
-  .mohan-clock .time-wrap .time-clock .indicators > div:nth-child(2),
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(2) {
-    transform: rotate(90deg); }
-  .mohan-clock .time-wrap .time-clock .indicators > div:nth-child(3),
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(3) {
-    transform: rotate(120deg); }
-  .mohan-clock .time-wrap .time-clock .indicators > div:nth-child(4),
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(4) {
-    transform: rotate(150deg); }
-  .mohan-clock .time-wrap .time-clock .indicators > div:nth-child(5),
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(5) {
-    transform: rotate(210deg); }
-  .mohan-clock .time-wrap .time-clock .indicators > div:nth-child(6),
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(6) {
-    transform: rotate(240deg); }
-  .mohan-clock .time-wrap .time-clock .letters {
-    z-index: 5;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    margin-top: -100px;
-    margin-left: -100px; }
-  .mohan-clock .time-wrap .time-clock .letters > div {
-    border: none; }
-  .mohan-clock .time-wrap .time-clock .letters > div:before,
-  .mohan-clock .time-wrap .time-clock .letters > div:after {
-    top: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    margin-top: -10px;
-    text-align: center; }
-  .mohan-clock .time-wrap .time-clock .letters > div:before {
-    left: 15px; }
-  .mohan-clock .time-wrap .time-clock .letters > div:after {
-    right: 15px; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(1):before {
-    content: '9'; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(1):after {
-    content: '3'; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(2):before,
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(2):after {
-    transform: rotate(-90deg); }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(2):before {
-    content: '12'; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(2):after {
-    content: '6'; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(3):before,
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(3):after {
-    transform: rotate(-120deg); }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(3):before {
-    content: '1'; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(3):after {
-    content: '7'; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(4):before,
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(4):after {
-    transform: rotate(-150deg); }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(4):before {
-    content: '2'; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(4):after {
-    content: '8'; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(5):before,
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(5):after {
-    transform: rotate(-210deg); }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(5):before {
-    content: '4'; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(5):after {
-    content: '10'; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(6):before,
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(6):after {
-    transform: rotate(-240deg); }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(6):before {
-    content: '5'; }
-  .mohan-clock .time-wrap .time-clock .letters > div:nth-child(6):after {
-    content: '11'; }
-  .mohan-clock .time-wrap .time-clock .arrows {
-    z-index: 5;
-    width: 220px;
-    height: 220px;
-    margin-top: -110px;
-    margin-left: -110px;
-    transform: rotate(90deg) scale(0);
-    animation-delay: 2s;
-    animation: showArrow .8s forwards; }
-  .mohan-clock .time-wrap .time-clock .arrows > div {
-    width: inherit;
-    margin-left: inherit; }
-  .mohan-clock .time-wrap .time-clock .arrows > div:before {
-    height: inherit;
-    background: #743a6a; }
-  .mohan-clock .time-wrap .time-clock .arrows .hour {
-    height: 8px;
-    margin-top: -4px; }
-  .mohan-clock .time-wrap .time-clock .arrows .hour:before {
-    left: 40px;
-    width: 90px; }
-  .mohan-clock .time-wrap .time-clock .arrows .minute {
-    height: 5px;
-    margin-top: -2.5px; }
-  .mohan-clock .time-wrap .time-clock .arrows .minute:before {
-    left: 10px;
-    width: 120px; }
-  .mohan-clock .time-wrap .time-clock .arrows .second {
-    height: 2px;
-    margin-top: -1px; }
-  .mohan-clock .time-wrap .time-clock .arrows .second:before {
-    left: 15px;
-    width: 115px;
-    background: #f7af76; }
-  .mohan-clock .time-wrap .time-clock .arrows .second:after {
-    top: 50%;
-    left: 50%;
-    width: 14px;
-    height: 14px;
-    margin-top: -7px;
-    margin-left: -7px;
-    background: #f7af76;
-    border-radius: 50%;
-    border: 2px solid #dde5eb; }
-@keyframes showArrow {
-  0% {
-    transform: rotate(90deg) scale(0); }
-  100% {
-    transform: rotate(90deg) scale(1); } }
-input.time-input {
-  margin: 20px 0;
-  padding: 0 20px;
-  width: 100%;
-  line-height: 60px;
-  font-size: 300%;
-  font-weight: bold;
-  border: 2px solid #999;
-  text-align: center; }
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border: 3px solid var(--chalk);
+  border-radius: 50%;
+}
 
-#config-panel .form-group,
-#config-panel .checkbox,
-#config-panel .btn {
-  margin-right: 15px; }
+.logo-hand {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  width: 3px;
+  margin-left: -1.5px;
+  background: var(--chalk);
+  border-radius: 2px;
+  transform-origin: 50% 100%;
+}
+
+.logo-minute { height: 14px; }
+
+.logo-hour {
+  height: 10px;
+  transform: rotate(90deg);
+}
+
+/* ---- Control bar ----------------------------------------------------------- */
+
+.control-bar {
+  max-width: 900px;
+  margin: 18px auto 0;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 22px;
+  background: var(--board-deep);
+  border-radius: 12px;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.control-label {
+  color: var(--chalk-dim);
+}
+
+.control-bar select,
+.control-bar input[type="number"] {
+  font-family: var(--body);
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--chalk);
+  border: none;
+  border-radius: 7px;
+  padding: 7px 10px;
+}
 
 #config-seed {
-  width: 110px; }
+  width: 100px;
+}
+
+.control-check input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--pencil);
+}
+
+.control-actions {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.btn {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
+  border-radius: 8px;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.btn-pencil {
+  background: var(--pencil);
+  border: 2px solid var(--pencil);
+  color: var(--ink);
+}
+
+.btn-pencil:hover {
+  background: var(--pencil-deep);
+  border-color: var(--pencil-deep);
+}
+
+.btn-chalk {
+  background: transparent;
+  border: 2px solid var(--chalk-dim);
+  color: var(--chalk);
+}
+
+.btn-chalk:hover {
+  border-color: var(--chalk);
+}
+
+/* ---- The worksheet paper ---------------------------------------------------- */
+
+.paper {
+  position: relative;
+  max-width: 900px;
+  margin: 26px auto 34px;
+  padding: 34px 44px 26px 66px;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 18px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Red margin line, like ruled worksheet paper */
+.paper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 44px;
+  width: 2px;
+  background: var(--margin-red);
+  opacity: 0.65;
+}
+
+.sheet-header {
+  display: flex;
+  gap: 44px;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 1.05rem;
+}
+
+.fill-line {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.fill-line::after {
+  content: '';
+  flex: 1;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 3px;
+}
+
+.fill-name { flex: 2; }
+.fill-date { flex: 1; }
+
+.sheet-title-row {
+  margin-top: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--rule-blue);
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+}
+
+.sheet-title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.sheet-instructions {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+/* Stamped when "Show answers" is on; prints so keys stay labeled */
+.answer-badge {
+  position: absolute;
+  top: 24px;
+  right: 30px;
+  transform: rotate(-4deg);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--margin-red);
+  border: 2px solid var(--margin-red);
+  border-radius: 6px;
+  padding: 4px 12px;
+}
+
+/* ---- Clock grid ------------------------------------------------------------- */
+
+.clock-grid {
+  margin-top: 26px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px 20px;
+}
+
+.clock-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clock-container {
+  height: 200px;
+  width: 200px;
+  max-width: 100%;
+}
+
+input.time-input {
+  margin-top: 16px;
+  width: 100%;
+  max-width: 216px;
+  padding: 8px 12px;
+  font-family: var(--body);
+  font-size: 1.9rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--ink);
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+}
+
+.sheet-meta {
+  margin: 22px 0 0;
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.sheet-meta:empty {
+  display: none;
+}
+
+/* ---- Footer ------------------------------------------------------------------ */
+
+.site-footer {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px 36px;
+  font-size: 0.85rem;
+  color: var(--chalk-dim);
+  text-align: center;
+}
+
+/* ---- Small screens ------------------------------------------------------------ */
+
+@media (max-width: 720px) {
+  .paper {
+    padding: 26px 22px 20px 44px;
+    margin: 18px 10px 26px;
+  }
+
+  .paper::before {
+    left: 28px;
+  }
+
+  .answer-badge {
+    position: static;
+    width: fit-content;
+    transform: none;
+    margin-bottom: 12px;
+  }
+
+  .clock-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sheet-header {
+    gap: 24px;
+  }
+
+  .control-actions {
+    margin-left: 0;
+  }
+}
+
+/* ---- Print: just the worksheet, fit to one page -------------------------------- */
 
 @media print {
   .no-print {
-    display: none; } }
+    display: none;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .paper,
+  .paper * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .paper {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .paper::before {
+    display: none;
+  }
+
+  .answer-badge {
+    top: 42px;
+    right: 0;
+  }
+
+  .clock-grid {
+    margin-top: 22px;
+    gap: 26px 18px;
+  }
+
+  .clock-container {
+    height: 195px;
+    width: 195px;
+  }
+
+  input.time-input {
+    margin-top: 12px;
+    font-size: 1.6rem;
+    padding: 6px 10px;
+  }
+}
+
+/* ---- Clock hand arrowheads (used by the anoClock plugin's DOM) ------------------ */
 
 .hour-hand .arm:before {
   border: solid black;
@@ -321,9 +435,12 @@ input.time-input {
   -webkit-transform: rotate(225deg);
   position: relative;
   bottom: 2px;
-  right: 4.5px; }
+  right: 4.5px;
+}
+
 .hour-hand .arm.white:before {
-  border-color: white; }
+  border-color: white;
+}
 
 .minute-hand .arm:before {
   border-color: black;
@@ -337,9 +454,12 @@ input.time-input {
   -webkit-transform: rotate(225deg);
   position: relative;
   bottom: 2px;
-  right: 5px; }
+  right: 5px;
+}
+
 .minute-hand .arm.white:before {
-  border-color: white; }
+  border-color: white;
+}
 
 .second-hand .arm:before {
   border: solid black;
@@ -352,7 +472,9 @@ input.time-input {
   -webkit-transform: rotate(225deg);
   position: relative;
   bottom: 6px;
-  right: 4px; }
-.second-hand .arm.white:before {
-  border: solid white; }
+  right: 4px;
+}
 
+.second-hand .arm.white:before {
+  border: solid white;
+}

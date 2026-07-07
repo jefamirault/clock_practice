@@ -5,134 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Clock Worksheet Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
     <script src="scripts/jquery-2.2.4.min.js"></script>
-    <script src="scripts/bootstrap.min.js"></script>
     <script src="scripts/anoClock.js"></script>
     <script src="scripts/random.js"></script>
-    <link rel="stylesheet" href="styles/bootstrap.min.css">
-    <link rel="stylesheet" href="styles/animate.min.css">
     <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
 
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-
-
-<div class="container">
-    <div class="row">
-        <div class="col-xs-12">
-            <h1>Clock Worksheet Generator</h1>
-            <h3>By <a href="https://jefamirault.com">Jef Amirault</a></h3>
-            <h5>jQuery plugin by Andrew Sheffield</h5>
+<header class="site-header no-print">
+    <div class="brand">
+        <div class="logo-clock" aria-hidden="true">
+            <div class="logo-hand logo-minute"></div>
+            <div class="logo-hand logo-hour"></div>
         </div>
+        <h1>Clock Worksheet Generator</h1>
     </div>
-</div>
+    <p class="byline">by <a href="https://jefamirault.com">Jef Amirault</a></p>
+</header>
 
+<form class="control-bar no-print" id="config-panel" onsubmit="return false;">
+    <label class="control" for="config-interval">
+        <span class="control-label">Times to the nearest</span>
+        <select id="config-interval">
+            <option value="60" selected>Hour</option>
+            <option value="30">Half hour</option>
+            <option value="15">Quarter hour</option>
+            <option value="5">5 minutes</option>
+            <option value="1">Minute</option>
+        </select>
+    </label>
+    <label class="control control-check">
+        <input type="checkbox" id="config-answers"> Show answers
+    </label>
+    <label class="control control-check">
+        <input type="checkbox" id="config-colors"> Colored clocks
+    </label>
+    <label class="control" for="config-seed">
+        <span class="control-label">Seed</span>
+        <input type="number" id="config-seed" placeholder="random" title="Same seed, same worksheet">
+    </label>
+    <span class="control-actions">
+        <button type="button" class="btn btn-pencil" id="new-worksheet">New worksheet</button>
+        <button type="button" class="btn btn-chalk" id="print-worksheet">Print</button>
+    </span>
+</form>
 
-
-<div class="container no-print">
-    <div class="row">
-        <div class="col-xs-12">
-            <form class="form-inline" id="config-panel" onsubmit="return false;">
-                <div class="form-group">
-                    <label for="config-interval">Times to nearest</label>
-                    <select id="config-interval" class="form-control">
-                        <option value="60" selected>Hour</option>
-                        <option value="30">Half hour</option>
-                        <option value="15">Quarter hour</option>
-                        <option value="5">5 minutes</option>
-                        <option value="1">Minute</option>
-                    </select>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" id="config-answers"> Show answers</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" id="config-colors"> Colored clocks</label>
-                </div>
-                <div class="form-group">
-                    <label for="config-seed">Seed</label>
-                    <input type="number" id="config-seed" class="form-control" placeholder="random">
-                </div>
-                <button type="button" class="btn btn-primary" id="new-worksheet">New Worksheet</button>
-            </form>
-        </div>
+<main class="paper">
+    <div class="answer-badge" id="answer-badge" hidden>Answer key</div>
+    <div class="sheet-header">
+        <div class="fill-line fill-name">Name</div>
+        <div class="fill-line fill-date">Date</div>
     </div>
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="col-sm-4 top-examples">
+    <div class="sheet-title-row">
+        <h2 class="sheet-title">Telling time</h2>
+        <p class="sheet-instructions" id="sheet-instructions">Write the time shown on each clock.</p>
+    </div>
+    <div class="clock-grid">
+        <div class="clock-cell">
             <div class="clock-container">
                 <div class="clock1"></div>
             </div>
-            <input class="time-input">
+            <input class="time-input" aria-label="Time for clock 1">
         </div>
-        <div class="col-sm-4 top-examples">
+        <div class="clock-cell">
             <div class="clock-container">
                 <div class="clock2"></div>
             </div>
-            <input class="time-input">
+            <input class="time-input" aria-label="Time for clock 2">
         </div>
-        <div class="col-sm-4 top-examples">
+        <div class="clock-cell">
             <div class="clock-container">
                 <div class="clock3"></div>
             </div>
-            <input class="time-input">
+            <input class="time-input" aria-label="Time for clock 3">
         </div>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="col-sm-4 time-zone">
+        <div class="clock-cell">
             <div class="clock-container">
                 <div class="clock4"></div>
             </div>
-            <input class="time-input">
+            <input class="time-input" aria-label="Time for clock 4">
         </div>
-        <div class="col-sm-4 time-zone">
+        <div class="clock-cell">
             <div class="clock-container">
                 <div class="clock5"></div>
             </div>
-            <input class="time-input">
+            <input class="time-input" aria-label="Time for clock 5">
         </div>
-        <div class="col-sm-4 time-zone">
+        <div class="clock-cell">
             <div class="clock-container">
                 <div class="clock6"></div>
             </div>
-            <input class="time-input">
+            <input class="time-input" aria-label="Time for clock 6">
         </div>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="col-sm-4 time-zone">
+        <div class="clock-cell">
             <div class="clock-container">
                 <div class="clock7"></div>
             </div>
-            <input class="time-input">
+            <input class="time-input" aria-label="Time for clock 7">
         </div>
-        <div class="col-sm-4 time-zone">
+        <div class="clock-cell">
             <div class="clock-container">
                 <div class="clock8"></div>
             </div>
-            <input class="time-input">
+            <input class="time-input" aria-label="Time for clock 8">
         </div>
-        <div class="col-sm-4 time-zone">
+        <div class="clock-cell">
             <div class="clock-container">
                 <div class="clock9"></div>
             </div>
-            <input class="time-input">
+            <input class="time-input" aria-label="Time for clock 9">
         </div>
     </div>
-</div>
+    <p class="sheet-meta" id="sheet-meta"></p>
+</main>
 
+<footer class="site-footer no-print">
+    <p>Reload or press New worksheet for a fresh set of clocks.
+        Analog clock plugin by <a href="https://codepen.io/andrewsheffield/full/qZedNE">Andrew Sheffield</a>.</p>
+</footer>
 
 <script src="scripts/script.js"></script>
 
 </body>
 </html>
-
