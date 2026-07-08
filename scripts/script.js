@@ -1,6 +1,7 @@
 // Configuration is read from the settings panel in index.html (#config-panel)
 
 var currentTimes = [];
+var currentSeed = null;
 
 function getConfig() {
     return {
@@ -11,11 +12,27 @@ function getConfig() {
     };
 }
 
+// Pre-fill the settings panel from URL parameters, e.g. ?seed=87860&interval=15&colors=1
+function applyUrlParams() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.has('seed'))
+        $('#config-seed').val(params.get('seed'));
+    if (params.has('colors')) {
+        var colors = params.get('colors');
+        $('#config-colors').prop('checked', colors === '1' || colors === 'true');
+    }
+    var interval = params.get('interval');
+    if (interval !== null && intervalPhrases[parseInt(interval, 10)])
+        $('#config-interval').val(parseInt(interval, 10));
+}
+
 // Generate 9 new times and redraw everything
 function newWorksheet() {
     var config = getConfig();
-    if (config.seed !== '')
-        resetRandom(parseInt(config.seed, 10));
+    currentSeed = config.seed !== ''
+        ? parseInt(config.seed, 10)
+        : Math.floor(Math.random() * 1000000);
+    resetRandom(currentSeed);
     currentTimes = [];
     for (var i = 0; i < 9; i++)
         currentTimes.push(nextTime(config.interval));
@@ -39,7 +56,7 @@ function updateSheetText() {
         (config.interval === 1 ? '.' : ', to the nearest ' + phrase + '.');
     $('#sheet-instructions').text(instructions);
     $('#answer-badge').prop('hidden', !config.answers);
-    $('#sheet-meta').text(config.seed !== '' ? 'Seed ' + config.seed : '');
+    $('#sheet-meta').text(currentSeed !== null ? 'Seed ' + currentSeed : '');
 }
 
 // Redraw the clocks for the current times (colors may change)
@@ -87,4 +104,32 @@ $('#print-worksheet').on('click', function() {
     window.print();
 });
 
+// Put the current worksheet's settings in the address bar and copy the link,
+// so the exact worksheet can be bookmarked or shared
+var bookmarkLabel = $('#bookmark-worksheet').text();
+var bookmarkTimer = null;
+$('#bookmark-worksheet').on('click', function() {
+    var config = getConfig();
+    var params = new URLSearchParams();
+    params.set('seed', currentSeed);
+    params.set('interval', config.interval);
+    if (config.colors)
+        params.set('colors', '1');
+    history.replaceState(null, '', window.location.pathname + '?' + params.toString());
+
+    var button = $(this);
+    function flash(text) {
+        button.text(text);
+        clearTimeout(bookmarkTimer);
+        bookmarkTimer = setTimeout(function() { button.text(bookmarkLabel); }, 2000);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText)
+        navigator.clipboard.writeText(window.location.href).then(
+            function() { flash('Link copied!'); },
+            function() { flash('URL updated'); });
+    else
+        flash('URL updated');
+});
+
+applyUrlParams();
 newWorksheet();

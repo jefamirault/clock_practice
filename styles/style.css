@@ -341,7 +341,7 @@ input.time-input {
 
 /* ---- Small screens ------------------------------------------------------------ */
 
-@media (max-width: 720px) {
+@media screen and (max-width: 720px) {
   .paper {
     padding: 26px 22px 20px 44px;
     margin: 18px 10px 26px;
@@ -407,6 +407,7 @@ input.time-input {
 
   .clock-grid {
     margin-top: 22px;
+    grid-template-columns: repeat(3, 1fr);
     gap: 26px 18px;
   }
 

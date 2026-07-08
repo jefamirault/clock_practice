@@ -25,9 +25,12 @@ Settings live in the panel at the top of the page (`#config-panel` in `index.htm
 - **Times to nearest** (`#config-interval`) — minute granularity of the random times: hour, half hour, quarter hour, 5 minutes, or minute. Changing it generates a new worksheet.
 - **Show answers** (`#config-answers`) — pre-fills the input under each clock with the answer (e.g. `3:45`) for printing an answer key; unchecked shows just `:`. Toggling only updates the inputs, the clocks keep their times.
 - **Colored clocks** (`#config-colors`) — colored clock faces instead of white/black. Re-renders the current times with new colors.
-- **Seed** (`#config-seed`) — optional. Entering a number makes worksheets reproducible (same seed = same times/colors); blank keeps the random seed. A set seed is printed tiny on the sheet footer (`#sheet-meta`) so the matching answer key can be regenerated later.
+- **Seed** (`#config-seed`) — optional. Entering a number makes worksheets reproducible (same seed = same times/colors); blank picks a random seed per worksheet. The effective seed is always printed tiny on the sheet footer (`#sheet-meta`) so the matching answer key can be regenerated later.
 - **New worksheet** — regenerates 9 new times with the current settings.
+- **Bookmark** (`#bookmark-worksheet`) — writes the current worksheet's settings into the address bar as query params (`?seed=…&interval=…&colors=1`) via `history.replaceState` and copies the link, so the exact worksheet can be bookmarked or shared. The button briefly flashes "Link copied!" (or "URL updated" when the clipboard is unavailable, e.g. non-HTTPS).
 - **Print** (`#print-worksheet`) — calls `window.print()`.
+
+The same query params work on page load: `applyUrlParams()` in `script.js` pre-fills the panel from `?seed=`, `?interval=` (60/30/15/5/1), and `?colors=` (`1` or `true`) before the first worksheet is generated, so a bookmarked URL reproduces its worksheet exactly.
 
 The printable sheet also carries text driven by the settings (`updateSheetText()` in `script.js`): the instruction line (`#sheet-instructions`) names the chosen interval, and a red "Answer key" stamp (`#answer-badge`) appears when Show answers is on.
 
@@ -38,7 +41,7 @@ The printable sheet also carries text driven by the settings (`updateSheetText()
 ## Structure
 
 - `index.html` — site header + control bar (both `.no-print`), then the worksheet `.paper` with a Name/Date header and a 3×3 grid of `.clock-cell` divs (`.clock1`–`.clock9`), each with an `<input class="time-input">` below it for writing the time. `updateInputs()` finds each input via `.closest('.clock-cell')`, so keep the clock and its input inside the same `.clock-cell`.
-- `scripts/script.js` — entry point (loaded last). Reads the settings panel (`getConfig()`) and drives generation: `newWorksheet()` (new times), `renderClocks()` (redraw via the `setAsClock` jQuery plugin), `updateInputs()` (answers/blanks), `updateSheetText()` (instructions/badge/seed note on the paper).
+- `scripts/script.js` — entry point (loaded last). Reads the settings panel (`getConfig()`) and drives generation: `applyUrlParams()` (panel from query params, runs once before the first worksheet), `newWorksheet()` (picks/stores `currentSeed`, generates new times), `renderClocks()` (redraw via the `setAsClock` jQuery plugin), `updateInputs()` (answers/blanks), `updateSheetText()` (instructions/badge/seed note on the paper), plus the Bookmark click handler (query params + clipboard).
 - `scripts/random.js` — seeded PRNG (`rng`, `sampler`, `resetRandom`), random time generation (`randomTime`, `nextTime`), and `generateColorPairs()` which picks 9 font/background pairs per render.
 - `scripts/anoClock.js` — third-party jQuery plugin (by Andrew Sheffield) that draws an analog clock; not project code, avoid editing.
 - `scripts/jquery-2.2.4.min.js`, `scripts/bootstrap.min.js`, `styles/*.min.css` — vendored libraries, do not edit. Bootstrap and animate.css are no longer referenced by `index.html` (the layout is custom CSS grid/flex); only jQuery is still loaded.
@@ -50,5 +53,7 @@ The printable sheet also carries text driven by the settings (`updateSheetText()
 - `random.js` must load before `script.js` (it defines `nextTime`, `resetRandom`, and `generateColorPairs`).
 - The `setAsClock` plugin appends DOM into the clock div on every call — always `empty()` the div before re-rendering (renderClocks does this).
 - Times can repeat across the 9 clocks; there is no repeat prevention.
+- A `?seed=` URL (or a typed seed) fills the seed field, so "New worksheet" keeps regenerating the same sheet until the field is cleared — that's intended, not a bug.
+- Reproducibility means "same seed = same first render": toggling Colored clocks re-rolls colors from the ongoing color generator, so the on-screen colors can drift from what a reload of the same seed shows. Times always reproduce.
 - Clock ticks and hands are inline `background-color` styles, which browsers skip when printing by default — the print stylesheet forces them with `print-color-adjust: exact` on `.paper`. Print sizes are tuned so the sheet fits one page; if you grow the header or clocks, re-check with a print preview.
 - The mobile media query restyles `.answer-badge` — don't set `display` on it there, or it overrides the `hidden` attribute and the badge shows when answers are off.
