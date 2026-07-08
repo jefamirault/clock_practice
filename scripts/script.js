@@ -8,6 +8,7 @@ function getConfig() {
         interval: parseInt($('#config-interval').val(), 10),
         answers: $('#config-answers').is(':checked'),
         colors: $('#config-colors').is(':checked'),
+        numbers: $('#config-numbers').is(':checked'),
         seed: $('#config-seed').val()
     };
 }
@@ -20,6 +21,10 @@ function applyUrlParams() {
     if (params.has('colors')) {
         var colors = params.get('colors');
         $('#config-colors').prop('checked', colors === '1' || colors === 'true');
+    }
+    if (params.has('numbers')) {
+        var numbers = params.get('numbers');
+        $('#config-numbers').prop('checked', numbers === '1' || numbers === 'true');
     }
     var interval = params.get('interval');
     if (interval !== null && intervalPhrases[parseInt(interval, 10)])
@@ -59,6 +64,11 @@ function updateSheetText() {
     $('#sheet-meta').text(currentSeed !== null ? 'Seed ' + currentSeed : '');
 }
 
+// Show or hide the "1." – "9." labels next to the clocks
+function updateProblemNumbers() {
+    $('.paper').toggleClass('show-numbers', getConfig().numbers);
+}
+
 // Redraw the clocks for the current times (colors may change)
 function renderClocks() {
     var config = getConfig();
@@ -96,6 +106,7 @@ $('#config-interval').on('change', newWorksheet);
 $('#config-seed').on('change', newWorksheet);
 $('#new-worksheet').on('click', newWorksheet);
 $('#config-colors').on('change', renderClocks);
+$('#config-numbers').on('change', updateProblemNumbers);
 $('#config-answers').on('change', function() {
     updateInputs();
     updateSheetText();
@@ -115,6 +126,8 @@ $('#bookmark-worksheet').on('click', function() {
     params.set('interval', config.interval);
     if (config.colors)
         params.set('colors', '1');
+    if (config.numbers)
+        params.set('numbers', '1');
     history.replaceState(null, '', window.location.pathname + '?' + params.toString());
 
     var button = $(this);
@@ -132,4 +145,5 @@ $('#bookmark-worksheet').on('click', function() {
 });
 
 applyUrlParams();
+updateProblemNumbers();
 newWorksheet();

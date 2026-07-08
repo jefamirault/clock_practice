@@ -283,17 +283,38 @@ a {
 
 /* ---- Clock grid ------------------------------------------------------------- */
 
+/* auto-fit lets the layout step 3 → 2 → 1 columns as the paper narrows;
+   the min width is the 200px clock. Print overrides this back to a fixed 3. */
 .clock-grid {
   margin-top: 26px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 30px 20px;
 }
 
 .clock-cell {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+/* Problem number ("1." – "9."), shown when the Problem numbers setting is on.
+   Absolutely positioned so toggling it doesn't reflow the grid or grow the
+   printed page. */
+.problem-number {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+
+.paper.show-numbers .problem-number {
+  display: block;
 }
 
 .clock-container {
@@ -356,10 +377,6 @@ input.time-input {
     width: fit-content;
     transform: none;
     margin-bottom: 12px;
-  }
-
-  .clock-grid {
-    grid-template-columns: 1fr;
   }
 
   .sheet-header {

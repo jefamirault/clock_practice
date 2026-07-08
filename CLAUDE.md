@@ -25,12 +25,13 @@ Settings live in the panel at the top of the page (`#config-panel` in `index.htm
 - **Times to nearest** (`#config-interval`) — minute granularity of the random times: hour, half hour, quarter hour, 5 minutes, or minute. Changing it generates a new worksheet.
 - **Show answers** (`#config-answers`) — pre-fills the input under each clock with the answer (e.g. `3:45`) for printing an answer key; unchecked shows just `:`. Toggling only updates the inputs, the clocks keep their times.
 - **Colored clocks** (`#config-colors`) — colored clock faces instead of white/black. Re-renders the current times with new colors.
+- **Problem numbers** (`#config-numbers`) — shows a "1."–"9." label at the top-left of each clock cell. The labels are static `.problem-number` spans in `index.html`, revealed by `updateProblemNumbers()` toggling the `show-numbers` class on `.paper`; they're absolutely positioned so toggling doesn't reflow the grid or grow the printed page.
 - **Seed** (`#config-seed`) — optional. Entering a number makes worksheets reproducible (same seed = same times/colors); blank picks a random seed per worksheet. The effective seed is always printed tiny on the sheet footer (`#sheet-meta`) so the matching answer key can be regenerated later.
 - **New worksheet** — regenerates 9 new times with the current settings.
-- **Bookmark** (`#bookmark-worksheet`) — writes the current worksheet's settings into the address bar as query params (`?seed=…&interval=…&colors=1`) via `history.replaceState` and copies the link, so the exact worksheet can be bookmarked or shared. The button briefly flashes "Link copied!" (or "URL updated" when the clipboard is unavailable, e.g. non-HTTPS).
+- **Bookmark** (`#bookmark-worksheet`) — writes the current worksheet's settings into the address bar as query params (`?seed=…&interval=…&colors=1&numbers=1`) via `history.replaceState` and copies the link, so the exact worksheet can be bookmarked or shared. The button briefly flashes "Link copied!" (or "URL updated" when the clipboard is unavailable, e.g. non-HTTPS).
 - **Print** (`#print-worksheet`) — calls `window.print()`.
 
-The same query params work on page load: `applyUrlParams()` in `script.js` pre-fills the panel from `?seed=`, `?interval=` (60/30/15/5/1), and `?colors=` (`1` or `true`) before the first worksheet is generated, so a bookmarked URL reproduces its worksheet exactly.
+The same query params work on page load: `applyUrlParams()` in `script.js` pre-fills the panel from `?seed=`, `?interval=` (60/30/15/5/1), `?colors=`, and `?numbers=` (`1` or `true`) before the first worksheet is generated, so a bookmarked URL reproduces its worksheet exactly.
 
 The printable sheet also carries text driven by the settings (`updateSheetText()` in `script.js`): the instruction line (`#sheet-instructions`) names the chosen interval, and a red "Answer key" stamp (`#answer-badge`) appears when Show answers is on.
 
