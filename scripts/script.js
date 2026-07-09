@@ -14,6 +14,36 @@ function getConfig() {
     };
 }
 
+// Remember the panel settings (not the seed) locally so they persist across visits
+var SETTINGS_KEY = 'clockSettings';
+
+function saveSettings() {
+    try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+            interval: parseInt($('#config-interval').val(), 10),
+            answers: $('#config-answers').is(':checked'),
+            colors: $('#config-colors').is(':checked'),
+            numbers: $('#config-numbers').is(':checked'),
+            unique: $('#config-unique').is(':checked')
+        }));
+    } catch (e) { /* private mode or full storage — settings just won't persist */ }
+}
+
+// Restore panel settings from localStorage. Runs before applyUrlParams so a
+// shared/bookmarked URL still wins over the locally remembered settings.
+function applySavedSettings() {
+    var s;
+    try {
+        s = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+    } catch (e) { return; }
+    if (!s) return;
+    if (intervalPhrases[s.interval]) $('#config-interval').val(s.interval);
+    if ('answers' in s) $('#config-answers').prop('checked', !!s.answers);
+    if ('colors' in s) $('#config-colors').prop('checked', !!s.colors);
+    if ('numbers' in s) $('#config-numbers').prop('checked', !!s.numbers);
+    if ('unique' in s) $('#config-unique').prop('checked', !!s.unique);
+}
+
 // Pre-fill the settings panel from URL parameters, e.g. ?seed=87860&interval=15&colors=1
 function applyUrlParams() {
     var params = new URLSearchParams(window.location.search);
@@ -421,6 +451,9 @@ $('#config-answers').on('change', function() {
     updateInputs();
     updateSheetText();
 });
+// Persist any settings change locally (seed is deliberately excluded)
+$('#config-interval, #config-answers, #config-colors, #config-numbers, #config-unique')
+    .on('change', saveSettings);
 // Browsers use document.title as the default "Save as PDF" filename, so swap in a
 // name that says which worksheet this is (seed + settings) around printing. Using
 // beforeprint/afterprint covers the Print button and the Ctrl/Cmd+P shortcut alike.
@@ -490,6 +523,7 @@ $('#bookmark-worksheet').on('click', function() {
         flash('URL updated');
 });
 
+applySavedSettings();
 applyUrlParams();
 updateProblemNumbers();
 renderSavedWorksheets();
