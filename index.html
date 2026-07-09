@@ -38,23 +38,31 @@
         </select>
     </label>
     <label class="control control-check">
-        <input type="checkbox" id="config-answers"> Show answers
+        <input type="checkbox" id="config-answers"> Answer Key
     </label>
     <label class="control control-check">
-        <input type="checkbox" id="config-colors"> Colored clocks
+        <input type="checkbox" id="config-colors"> Color
     </label>
     <label class="control control-check">
         <input type="checkbox" id="config-numbers"> Problem numbers
     </label>
+    <label class="control control-check" title="Every problem on the sheet gets a different time">
+        <input type="checkbox" id="config-unique"> Prevent duplicates
+    </label>
     <label class="control" for="config-seed">
         <span class="control-label">Seed</span>
         <input type="number" id="config-seed" placeholder="random" title="Same seed, same worksheet">
+        <button type="button" class="btn btn-chalk" id="reset-seed" title="Clear the seed and generate a new random worksheet">Randomize</button>
     </label>
     <span class="control-actions">
-        <button type="button" class="btn btn-pencil" id="new-worksheet">New worksheet</button>
-        <button type="button" class="btn btn-chalk" id="bookmark-worksheet" title="Put this worksheet's seed and settings in the URL so it can be bookmarked or shared">Bookmark</button>
+        <button type="button" class="btn btn-pencil" id="bookmark-worksheet" title="Put this worksheet's seed and settings in the URL so it can be bookmarked or shared">Save Worksheet</button>
         <button type="button" class="btn btn-chalk" id="print-worksheet">Print</button>
     </span>
+    <div class="saved-row" id="saved-row">
+        <div class="saved-tools" id="saved-tools"></div>
+        <span class="saved-eyebrow">Saved</span>
+        <div class="saved-list" id="saved-list"></div>
+    </div>
 </form>
 
 <main class="paper">
@@ -136,7 +144,7 @@
 </main>
 
 <footer class="site-footer no-print">
-    <p>Reload or press New worksheet for a fresh set of clocks.
+    <p>Reload or press Randomize for a fresh set of clocks.
         Analog clock plugin by <a href="https://codepen.io/andrewsheffield/full/qZedNE">Andrew Sheffield</a>.</p>
 </footer>
 

@@ -9,7 +9,7 @@ function rand() {
 }
 
 function rng(startSeed) {
-    let seed = startSeed || Math.random();
+    let seed = (startSeed === undefined) ? Math.random() : startSeed; // not ||, seed 0 is valid
     return function() {
         let x = Math.sin(seed++) * 10000;
         return x - Math.floor(x);

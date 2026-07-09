@@ -193,6 +193,212 @@ a {
   border-color: var(--chalk);
 }
 
+/* ---- Saved worksheets: filed paper slips ----------------------------------- */
+
+.saved-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(243, 239, 228, 0.14);
+}
+
+.saved-eyebrow {
+  font-family: var(--display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--chalk-dim);
+}
+
+.saved-eyebrow--empty {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.saved-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.saved-chip {
+  display: inline-flex;
+  align-items: stretch;
+  background: var(--chalk);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 3px 0 0 var(--margin-red);   /* worksheet margin line */
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.saved-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: inset 3px 0 0 var(--margin-red), 0 5px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* A single pencil (or check/× while editing) sits left of the chip list */
+.saved-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.saved-tools:empty { display: none; }   /* no stray gap when there's nothing to edit */
+
+.saved-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: transparent;
+  border: 2px solid var(--chalk-dim);
+  border-radius: 8px;
+  color: var(--chalk);
+  cursor: pointer;
+  transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease;
+}
+
+.saved-tool svg { display: block; }
+
+.saved-tool:hover,
+.saved-tool:focus-visible { border-color: var(--chalk); }
+
+.saved-tool--save:hover,
+.saved-tool--save:focus-visible {
+  background: var(--pencil);
+  border-color: var(--pencil);
+  color: var(--ink);
+}
+
+.saved-tool--cancel:hover,
+.saved-tool--cancel:focus-visible {
+  background: var(--margin-red);
+  border-color: var(--margin-red);
+  color: var(--chalk);
+}
+
+/* Editing chips don't lift like loadable ones — they hold still to drag/rename */
+.saved-chip--edit:hover {
+  transform: none;
+  box-shadow: inset 3px 0 0 var(--margin-red), 0 3px 9px rgba(0, 0, 0, 0.22);
+}
+
+.saved-chip--dragging,
+.saved-chip--dragging:hover {
+  transform: none;
+  opacity: 0.5;
+}
+
+.saved-chip__load,
+.saved-chip__rename-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 7px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--display);
+  text-align: left;
+  color: var(--ink);
+}
+
+.saved-chip__load { padding-left: 14px; }   /* leftmost — clears the red margin line */
+
+/* Middle zone lights up on hover so it reads as "click to rename" */
+.saved-chip__rename-btn:hover,
+.saved-chip__rename-btn:focus-visible {
+  background: rgba(245, 179, 27, 0.2);
+}
+
+.saved-chip__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.saved-chip__rename-icon {
+  display: block;
+  flex: none;
+  color: var(--ink-soft);
+  transition: color 120ms ease;
+}
+
+.saved-chip__rename-btn:hover .saved-chip__rename-icon,
+.saved-chip__rename-btn:focus-visible .saved-chip__rename-icon {
+  color: var(--pencil-deep);
+}
+
+.saved-chip__seed {
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.1;
+}
+
+.saved-chip__meta {
+  font-family: var(--body);
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+
+.saved-chip__handle {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px 0 10px;   /* left padding clears the red margin line */
+  color: var(--ink-soft);
+  cursor: grab;
+  border-right: 1px solid rgba(33, 39, 46, 0.12);
+}
+
+.saved-chip__handle:active { cursor: grabbing; }
+.saved-chip__handle svg { display: block; }
+
+.saved-chip__forget {
+  padding: 0 9px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(33, 39, 46, 0.12);
+  cursor: pointer;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--ink-soft);
+  transition: color 120ms ease, background-color 120ms ease;
+}
+
+.saved-chip__forget:hover,
+.saved-chip__forget:focus-visible {
+  color: var(--chalk);
+  background: var(--margin-red);
+}
+
+/* Renaming: the middle zone becomes a writing field, like penciling a label */
+.saved-chip__rename {
+  width: 13ch;
+  padding: 7px 12px;
+  background: transparent;
+  border: none;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.saved-chip__rename::placeholder {
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+.saved-chip__rename:focus { outline: none; }
+
 /* ---- The worksheet paper ---------------------------------------------------- */
 
 .paper {
