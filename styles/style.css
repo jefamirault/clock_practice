@@ -240,6 +240,11 @@ a {
   box-shadow: inset 3px 0 0 var(--margin-red), 0 5px 12px rgba(0, 0, 0, 0.3);
 }
 
+/* The chip whose worksheet is currently on the sheet gets a pencil-yellow fill */
+.saved-chip--active {
+  background: var(--pencil);
+}
+
 /* A single pencil (or check/× while editing) sits left of the chip list */
 .saved-tools {
   display: inline-flex;

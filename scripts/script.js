@@ -100,6 +100,7 @@ function newWorksheet() {
     }
     renderClocks();
     updateSheetText();
+    refreshActiveChip();
 }
 
 var intervalPhrases = {
@@ -191,6 +192,27 @@ function worksheetSignature(w) {
     return [w.seed, w.interval, +!!w.colors, +!!w.numbers, +!!w.unique, +!!w.answers].join('|');
 }
 
+// Which problems a sheet shows is determined only by the seed, the interval, and
+// the no-duplicates rule. Answer Key, Color, and Problem numbers are formatting
+// that leave the times unchanged, so a saved chip counts as active whenever these
+// three match — even if the formatting differs.
+function problemSignature(w) {
+    return [w.seed, w.interval, +!!w.unique].join('|');
+}
+
+// Signature of the worksheet currently on the sheet, so a matching saved chip
+// can be flagged as active
+function currentSignature() {
+    var c = getConfig();
+    return problemSignature({ seed: currentSeed, interval: c.interval, unique: c.unique });
+}
+
+// Re-highlight the active saved chip after the current worksheet/settings change.
+// Skipped while editing so it doesn't tear down the in-progress edit UI.
+function refreshActiveChip() {
+    if (!savedEditing) renderSavedWorksheets();
+}
+
 function saveWorksheet(w) {
     var sig = worksheetSignature(w);
     var list = readSavedWorksheets().filter(function(item) {
@@ -227,9 +249,6 @@ var renamePencil = '<svg class="saved-chip__rename-icon" viewBox="0 0 24 24" wid
 var checkIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" '
     + 'stroke="currentColor" stroke-width="2.4" stroke-linecap="round" '
     + 'stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
-var closeIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" '
-    + 'stroke="currentColor" stroke-width="2.4" stroke-linecap="round" '
-    + 'stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>';
 var gripIcon = '<svg viewBox="0 0 24 24" width="12" height="16" fill="currentColor" '
     + 'aria-hidden="true">'
     + '<circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>'
@@ -238,9 +257,9 @@ var gripIcon = '<svg viewBox="0 0 24 24" width="12" height="16" fill="currentCol
 
 // ---- Saved-list edit mode ---------------------------------------------------
 // A single pencil left of the row toggles edit mode for the whole list. Edits
-// (rename, delete, reorder) are staged on a working copy and only persisted when
-// the user confirms with the check; the × discards them. Outside edit mode the
-// chips are just load buttons.
+// (rename, delete, reorder) are staged on a working copy and persisted when the
+// user leaves edit mode via the check. Outside edit mode the chips are just load
+// buttons. (exitSavedEdit() still discards the draft; it's the shared teardown.)
 var savedEditing = false;
 var savedDraft = null;   // working copy of the list while editing
 
@@ -404,25 +423,27 @@ function renderSavedWorksheets() {
     // Left-of-list controls: a pencil to enter edit mode, or check/× to finish it
     if (savedEditing) {
         $('<button type="button" class="saved-tool saved-tool--save">')
-            .attr('title', 'Save changes').attr('aria-label', 'Save changes')
+            .attr('title', 'Done editing').attr('aria-label', 'Done editing')
             .html(checkIcon).on('click', commitSavedEdit).appendTo(tools);
-        $('<button type="button" class="saved-tool saved-tool--cancel">')
-            .attr('title', 'Discard changes').attr('aria-label', 'Discard changes')
-            .html(closeIcon).on('click', exitSavedEdit).appendTo(tools);
     } else if (!empty) {
         $('<button type="button" class="saved-tool saved-tool--edit">')
             .attr('title', 'Edit saved worksheets').attr('aria-label', 'Edit saved worksheets')
             .html(pencilIcon).on('click', enterSavedEdit).appendTo(tools);
     }
 
+    var activeSig = currentSignature();
     list.forEach(function(w, idx) {
         if (!savedEditing) {
-            $('<div class="saved-chip">').append(
-                $('<button type="button" class="saved-chip__load">')
-                    .attr('title', 'Load this worksheet')
-                    .append(chipLabel(w))
-                    .on('click', function() { applySavedWorksheet(w); })
-            ).appendTo(container);
+            var active = problemSignature(w) === activeSig;
+            var load = $('<button type="button" class="saved-chip__load">')
+                .attr('title', active ? 'This worksheet is on the sheet' : 'Load this worksheet')
+                .append(chipLabel(w))
+                .on('click', function() { applySavedWorksheet(w); });
+            if (active) load.attr('aria-current', 'true');
+            $('<div class="saved-chip">')
+                .toggleClass('saved-chip--active', active)
+                .append(load)
+                .appendTo(container);
             return;
         }
         var chip = $('<div class="saved-chip saved-chip--edit">').attr('data-idx', idx);
