@@ -18,6 +18,10 @@ Then open `http://localhost:8000` and print the page. Reload to generate a new w
 
 Rsyncs `index.html`, `scripts/`, and `styles/` (nothing else — no `.git`, `CLAUDE.md`, or the script itself) to the server's nginx web root, with `--delete`. Server settings come from a gitignored `.env` (`DEPLOY_USER`, `DEPLOY_HOST`, `DEPLOY_PATH`); copy `.env.example` to `.env` and fill in the host to set up a new machine. The script aborts with a message if `.env` or any variable is missing. Rsync runs with `--no-owner --no-group` because the deploy user can't chown/chgrp files created by other users on the server.
 
+Every deploy also ships a `deploy.json` stamp (UTC timestamp, short commit SHA, branch, dirty
+flag). It is public on purpose and is what https://status.jefamirault.com/ reads to report what
+is live here — see `~/devops/PATTERNS.md` § Deploy stamping.
+
 ## Configuration
 
 Settings live in the panel at the top of the page (`#config-panel` in `index.html`, hidden when printing via the `.no-print` class):
